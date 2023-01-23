@@ -1,6 +1,7 @@
 const { response } = require("express");
 const User = require("../models/user");
 const { encryptPassword, comparePassword } = require("../security/encryption");
+const { createToken } = require("../security/tokenHandler");
 
 const userRoute = (app) => {
   app.get("/", (req, res) => {
@@ -12,36 +13,43 @@ const userRoute = (app) => {
     try {
       const foundUser = await User.find({ email: email });
       if (foundUser.length > 0) {
-        console.log("email correct");
         const isPasswordCorrect = await comparePassword(
           password,
           foundUser[0].hashedPassword
         );
-        console.log("isPasswordCorrect" , isPasswordCorrect)
         if (isPasswordCorrect === true) {
-          console.log("password correct");
-          return res.send(200);
-         }
+          const token = createToken(foundUser);
+          return res.json({ token : `Bearer ${token}` });
+        }
       }
 
       return res.send("password or email is incorrect");
     } catch (e) {
-      res.send(500);
+      console.log("eeee" , e)
+     return res.send(500);
     }
   });
 
   app.post("/register", async (req, res) => {
-    const { email, password } = req.body;
+    const { email, name, roles, password } = req.body;
     try {
+      const foundUser = await User.find({ email: email });
+      if (foundUser.length > 0) {
+        return res.send(400);
+      }
+
       var hashedPassword = await encryptPassword(password);
       console.log("hashedPassword", hashedPassword);
       const user = User({
         hashedPassword: hashedPassword,
         email: email,
+        name: name,
+        roles: roles,
       });
 
-      await user.save();
-      return res.send(200);
+      const savedUser = await user.save();
+      const token = createToken(savedUser);
+      return res.json({ token : `Bearer ${token}` });
     } catch (e) {
       console.log("e", e);
       return res.send(500);
