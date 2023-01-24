@@ -49,6 +49,7 @@ const userRoute = (app) => {
 
       const savedUser = await user.save();
       const token = createToken(savedUser);
+      console.log("token4325435345325",token)
       return res.json({ token : `Bearer ${token}` });
     } catch (e) {
       console.log("e", e);

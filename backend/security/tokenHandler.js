@@ -13,11 +13,11 @@ const verifyToken = (req, res, next) => {
   if (token) {
     try {
       // cut using slice or
-      var decoded = jwt.verify(token.split(" ")[1], "ddjfkdfjldsjkbbf");
-      console.log("tokentokentoken", decoded);
+      var decoded = jwt.verify(token, token.split('.')[1]);
+      console.log("Decoded details", decoded);
       next();
     } catch (e) {
-      return res.send(401);
+      return res.send(401,console.log("Denied"));
     }
   }
 };
