@@ -8,8 +8,8 @@ const cors  = require("cors");
 
 app.use(bodyParser.json());
 app.use(cors())
-const url =
-  "mongodb+srv://kgothatsoKgatho:kgothatso24@cluster0.bp4ew.mongodb.net/?retryWrites=true&w=majority";
+//insert you mongoDB Url here below
+const url = 
 mongoose.connect(url, { useUnifiedTopology: true, useNewUrlParser: true });
 const connection = mongoose.connection;
 connection.once("open", function () {
